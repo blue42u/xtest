@@ -10,7 +10,7 @@ local function outdata()
 		d.user = d.user / d.count
 		d.sys = d.sys / d.count
 		print(('%-5d %-8.2f %-10.2f %07.4f'):format(
-			d.cores, d.real, d.user, 100*d.sys/(d.user+d.sys)
+			d.cores, d.real, d.user, 100*d.user/(d.user+d.sys)
 		))
 	end
 end
