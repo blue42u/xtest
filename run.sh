@@ -13,7 +13,9 @@ for n in $(seq 1 $MAXW); do
 		o_args+=( "${arg}" )
 	done
 
-	echo
-	echo Cores $n
-	time -p "${o_args[@]}" &> /dev/null || echo Failed
+	for i in $(seq 1 ${RUNS:-1}); do
+		echo
+		echo Cores $n
+		time -p "${o_args[@]}" &> /dev/null || echo Failed
+	done
 done |& lua data.lua

@@ -9,13 +9,17 @@ SWIFT_DIR="${SWIFT_DIR:-${HOME}/swift-t-install}"
 # Test params
 MAXW=
 FIB_POWER=30
-while getopts f:w: o; do
+RUNS=
+while getopts r:f:w: o; do
 	case "${o}" in
 	f)
 		FIB_POWER=${OPTARG}
 		;;
 	w)
 		MAXW=${OPTARG}
+		;;
+	r)
+		RUNS=${OPTARG}
 		;;
 	esac
 done
@@ -24,6 +28,7 @@ done
 export TURBINE_USER_LIB=$SWIFT_DIR/turbine/lib
 export LD_LIBRARY_PATH=$SWIFT_DIR/lb/lib:$SWIFT_DIR/c-utils/lib:$HOME
 export MAXW
+export RUNS
 
 # Compile the XTask tests
 gcc -O2 -o fib -I"$XTASK_DIR" tests/fib.c -L"$XTASK_DIR" -lxtask -pthread

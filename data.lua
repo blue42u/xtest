@@ -1,27 +1,35 @@
 #!/usr/bin/env lua
 
-local d
+local d = {}
 
 print('Cores Time     HotTime    HotProp')
 
 local function outdata()
-	print(('%-5d %-8.2f %-10.2f %07.4f'):format(
-		d.cores, d.real, d.user, 100*d.sys/(d.user+d.sys)
-	))
+	if d.cores then
+		d.real = d.real / d.count
+		d.user = d.user / d.count
+		d.sys = d.sys / d.count
+		print(('%-5d %-8.2f %-10.2f %07.4f'):format(
+			d.cores, d.real, d.user, 100*d.sys/(d.user+d.sys)
+		))
+	end
 end
 
 for l in io.lines() do
 	if l:match('^Cores') then
-		if d then outdata() end
-		d = {}
-		d.cores = tonumber(l:match('^Cores (%d+)'))
+		local cores = tonumber(l:match('^Cores (%d+)'))
+		if d.cores == cores then
+			d.count = d.count + 1
+		else
+			outdata()
+			d = {cores=cores, count=1}
+		end
 	elseif l:match('^Failed') then
-		d = nil
+		d = {}
 	elseif #l > 3 then
 		local k,v = l:match('^(%a+) ([%d\\.]+)$')
-		d[k] = tonumber(v)
+		d[k] = (d[k] or 0) + tonumber(v)
 	end
 end
 
-if d then outdata() end
-
+outdata()
