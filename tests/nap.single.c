@@ -1,4 +1,3 @@
-#include "xtask.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -23,7 +22,7 @@ int main(int argc, char** argv) {
 	} while(c != -1);
 
 	for(int i=0; i<samples; i++)
-		nap();
+		n();
 
 	return 0;
 }
