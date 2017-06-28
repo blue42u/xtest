@@ -7,13 +7,13 @@ print('Cores Time     HotTime    HotProp')
 local totaltime = 0
 local function outdata()
 	if d.cores then
+		totaltime = totaltime + d.real
 		d.real = d.real / d.count
 		d.user = d.user / d.count
 		d.sys = d.sys / d.count
 		print(('%-5d %-8.2f %-10.2f %07.4f'):format(
 			d.cores, d.real, d.user, 100*d.user/(d.user+d.sys)
 		))
-		totaltime = totaltime + d.real
 	end
 end
 
