@@ -10,7 +10,7 @@ SWIFT_DIR="${SWIFT_DIR:-${HOME}/swift-t-install}"
 MAXW=
 FIB_POWER=30
 RUNS=
-NAP_POWER=1000
+NAP_POWER=7000000
 while getopts r:w:f:n: o; do
 	case "${o}" in
 	f)
@@ -35,8 +35,12 @@ export MAXW
 export RUNS
 
 # Compile the XTask tests
-gcc -O2 -o fib -I"$XTASK_DIR" tests/fib.c -L"$XTASK_DIR" -lxtask -pthread
-gcc -O2 -o nap -I"$XTASK_DIR" tests/nap.c -L"$XTASK_DIR" -lxtask -pthread
+function comp() {
+	gcc -O2 -std=gnu99 -o $1 -I"$XTASK_DIR" tests/$1.c \
+		-L"$XTASK_DIR" -lxtask -pthread
+}
+comp fib
+comp nap
 
 # Run the tests
 if ! [[ -d out ]]; then mkdir out; fi
@@ -49,7 +53,7 @@ echo "Swift on Fib($FIB_POWER):"
 
 echo "XTask on Nap($NAP_POWER):"
 ./run.sh ./nap -w{} -s${NAP_POWER} | tee out/nap-xtask.dat
-echo "Swift on Fib($NAP_POWER):"
+echo "Swift on Nap($NAP_POWER):"
 ./run.sh $SWIFT_DIR/turbine/bin/turbine -n {} tests/nap.tic -tasks=${NAP_POWER} \
 	| tee out/nap-swift.dat
 
