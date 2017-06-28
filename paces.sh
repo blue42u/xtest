@@ -29,7 +29,7 @@ export MAXW
 gcc -O2 -o fib -I"$XTASK_DIR" tests/fib.c -L"$XTASK_DIR" -lxtask -pthread
 
 # Run the tests
-mkdir out
+if ! [[ -d out ]]; then mkdir out; fi
 echo "XTask on Fib($FIB_POWER):"
 ./run.sh ./fib -w{} -f${FIB_POWER} | tee out/fib-xtask.dat
 echo "Swift on Fib($FIB_POWER):"
