@@ -11,8 +11,12 @@ MAXW=
 FIB_POWER=30
 RUNS=
 NAP_POWER=7000000
-while getopts r:w:f:n: o; do
+DISABLE_SWIFT=
+while getopts xr:w:f:n: o; do
 	case "${o}" in
+	x)
+		DISABLE_SWIFT=yes
+		;;
 	f)
 		FIB_POWER=${OPTARG}
 		;;
@@ -51,18 +55,21 @@ echo "Single on Fib($FIB_POWER):"
 ./run.sh ./fib.single ${FIB_POWER} | tee out/fib-single.dat
 echo "XTask on Fib($FIB_POWER):"
 ./run.sh ./fib -w{} -f${FIB_POWER} | tee out/fib-xtask.dat
+if [[ -z $DISABLE_SWIFT ]]; then
 echo "Swift on Fib($FIB_POWER):"
 ./run.sh $SWIFT_DIR/turbine/bin/turbine -n {} tests/fib.tic -arg=${FIB_POWER} \
 	| tee out/fib-swift.dat
+fi
 
 echo "Single on Nap($NAP_POWER):"
 ./run.sh ./nap.single -s${NAP_POWER} | tee out/nap-single.dat
 echo "XTask on Nap($NAP_POWER):"
 ./run.sh ./nap -w{} -s${NAP_POWER} | tee out/nap-xtask.dat
+if [[ -z $DISABLE_SWIFT ]]; then
 echo "Swift on Nap($NAP_POWER):"
 ./run.sh $SWIFT_DIR/turbine/bin/turbine -n {} tests/nap.tic -tasks=${NAP_POWER} \
 	| tee out/nap-swift.dat
-
+fi
 
 # Cleanup
 rm fib fib.single nap nap.single
