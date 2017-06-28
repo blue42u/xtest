@@ -40,17 +40,23 @@ function comp() {
 		-L"$XTASK_DIR" -lxtask -pthread
 }
 comp fib
+comp fib.single
 comp nap
+comp nap.single
 
 # Run the tests
 if ! [[ -d out ]]; then mkdir out; fi
 
+echo "Single on Fib($FIB_POWER):"
+./run.sh ./fib.single ${FIB_POWER} | tee out/fib-single.dat
 echo "XTask on Fib($FIB_POWER):"
 ./run.sh ./fib -w{} -f${FIB_POWER} | tee out/fib-xtask.dat
 echo "Swift on Fib($FIB_POWER):"
 ./run.sh $SWIFT_DIR/turbine/bin/turbine -n {} tests/fib.tic -arg=${FIB_POWER} \
 	| tee out/fib-swift.dat
 
+echo "Single on Nap($NAP_POWER):"
+./run.sh ./nap.single -s${NAP_POWER} | tee out/nap-single.dat
 echo "XTask on Nap($NAP_POWER):"
 ./run.sh ./nap -w{} -s${NAP_POWER} | tee out/nap-xtask.dat
 echo "Swift on Nap($NAP_POWER):"
@@ -59,4 +65,4 @@ echo "Swift on Nap($NAP_POWER):"
 
 
 # Cleanup
-rm fib nap
+rm fib fib.single nap nap.single
