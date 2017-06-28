@@ -4,6 +4,7 @@ local d = {}
 
 print('Cores Time     HotTime    HotProp')
 
+local totaltime = 0
 local function outdata()
 	if d.cores then
 		d.real = d.real / d.count
@@ -12,6 +13,7 @@ local function outdata()
 		print(('%-5d %-8.2f %-10.2f %07.4f'):format(
 			d.cores, d.real, d.user, 100*d.user/(d.user+d.sys)
 		))
+		totaltime = totaltime + d.real
 	end
 end
 
@@ -33,3 +35,5 @@ for l in io.lines() do
 end
 
 outdata()
+
+io.stderr:write('Total time used: '..totaltime..'\n')
