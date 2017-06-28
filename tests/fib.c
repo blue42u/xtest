@@ -58,4 +58,6 @@ int main(int argc, char** argv) {
 	fibdata fd = {{fib, 0, NULL, NULL}, fibindex, &out};
 	xtask_run(&fd, xc);
 	printf("%d\n", out);
+
+	return 0;
 }
