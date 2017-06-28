@@ -2,7 +2,9 @@
 
 local d = {}
 
-print('Cores Time     HotTime    HotProp')
+print('Cores Norm     Time     HotTime    HotProp')
+
+local firsttime
 
 local totaltime = 0
 local function outdata()
@@ -11,8 +13,9 @@ local function outdata()
 		d.real = d.real / d.count
 		d.user = d.user / d.count
 		d.sys = d.sys / d.count
-		print(('%-5d %-8.2f %-10.2f %07.4f'):format(
-			d.cores, d.real, d.user, 100*d.user/(d.user+d.sys)
+		if not firsttime then firsttime = d.real end
+		print(('%-5d %-8.2f %-8.2f %-10.2f %07.4f'):format(
+			d.cores, d.real / firsttime, d.real, d.user, 100*d.user/(d.user+d.sys)
 		))
 	end
 end
