@@ -12,10 +12,15 @@ FIB_POWER=30
 RUNS=
 NAP_POWER=7000000
 DISABLE_SWIFT=
-while getopts xr:w:f:n: o; do
+DISABLE_STC=
+while getopts xXr:w:f:n: o; do
 	case "${o}" in
 	x)
+		DISABLE_STC=yes
+		;;
+	X)
 		DISABLE_SWIFT=yes
+		DISABLE_STC=yes
 		;;
 	f)
 		FIB_POWER=${OPTARG}
@@ -50,7 +55,7 @@ function comp() {
 #	$CC $CFLAGS -std=gnu99 -DUSE=xtask -I$XTASK_DIR tests/$1.c \
 #		-o bin/$1.basicstack -pthread -L$XTASK_DIR -lxtask-basicstack
 	$CC $CFLAGS -std=gnu99 -DUSE_single -o bin/$1.single tests/$1.c
-	if [[ -z "${DISABLE_SWIFT}" ]]; then
+	if [[ -z "${DISABLE_STC}" ]]; then
 	$SWIFT_DIR/stc/bin/stc $STCFLAGS tests/$1.swift bin/$1.tic
 	fi
 }
