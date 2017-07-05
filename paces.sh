@@ -39,37 +39,51 @@ export MAXW
 export RUNS
 
 # Compile the XTask tests
+if ! [[ -d bin ]]; then mkdir bin; fi
+echo "Compiling C with ${CC:=gcc} ${CFLAGS:=-O2}"
+echo "and Swift with .../stc ${STCFLAGS}"
 function comp() {
-	gcc -O2 -std=gnu99 -o $1 -I"$XTASK_DIR" tests/$1.c \
-		-L"$XTASK_DIR" -lxtask -pthread
+	$CC $CFLAGS -std=gnu99 -DUSE_openmp -I$XTASK_DIR tests/$1.c \
+		-o bin/$1.openmp -fopenmp
+	$CC $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
+		-o bin/$1.jigstack -pthread -L$XTASK_DIR -lxtask-jigstack
+#	$CC $CFLAGS -std=gnu99 -DUSE=xtask -I$XTASK_DIR tests/$1.c \
+#		-o bin/$1.basicstack -pthread -L$XTASK_DIR -lxtask-basicstack
+	$CC $CFLAGS -std=gnu99 -DUSE_single -o bin/$1.single tests/$1.c
+	$SWIFT_DIR/stc/bin/stc $STCFLAGS tests/$1.swift bin/$1.tic
 }
 comp fib
-comp fib.single
-comp nap
-comp nap.single
+#comp nap
+#comp matrix
 
 # Run the tests
 if ! [[ -d out ]]; then mkdir out; fi
 
-echo "Single on Fib($FIB_POWER):"
-./run.sh ./fib.single ${FIB_POWER} | tee out/fib-single.dat
-echo "XTask on Fib($FIB_POWER):"
-./run.sh ./fib -w{} -f${FIB_POWER} | tee out/fib-xtask.dat
-if [[ -z $DISABLE_SWIFT ]]; then
-echo "Swift on Fib($FIB_POWER):"
-./run.sh $SWIFT_DIR/turbine/bin/turbine -n {} tests/fib.tic -arg=${FIB_POWER} \
-	| tee out/fib-swift.dat
-fi
+function run() {
+	X="$1"
+	shift 1
+	MS=8
+	for T in single jigstack; do
+		echo -n "Running $X($@) using $T"
+		printf '.%.0s' `seq 1 $(($MS-${#T}+1))`
+		./run.sh bin/$X.$T "$@" | tee out/$X-$T.dat | while read l
+		do echo -n .; done
+		echo
+	done
+	echo -n "Running $X($@) using Swift"
+	printf '.%.0s' `seq 1 $(($MS-5+2))`
+	ARGS=""
+	for a in "$@"; do
+		if [[ -z "${a:2}" ]]
+		then ARGS="$ARGS -${a:1:1}"
+		else ARGS="$ARGS -${a:1:1}=${a:2}"
+		fi
+	done
+	./run.sh $SWIFT_DIR/turbine/bin/turbine -n {} bin/$X.tic $ARGS \
+		| tee out/$X-swift.dat | while read l
+	do echo -n .; done
+	echo
+}
 
-echo "Single on Nap($NAP_POWER):"
-./run.sh ./nap.single -s${NAP_POWER} | tee out/nap-single.dat
-echo "XTask on Nap($NAP_POWER):"
-./run.sh ./nap -w{} -s${NAP_POWER} | tee out/nap-xtask.dat
-if [[ -z $DISABLE_SWIFT ]]; then
-echo "Swift on Nap($NAP_POWER):"
-./run.sh $SWIFT_DIR/turbine/bin/turbine -n {} tests/nap.tic -tasks=${NAP_POWER} \
-	| tee out/nap-swift.dat
-fi
-
-# Cleanup
-rm fib fib.single nap nap.single
+run fib -f$FIB_POWER -w{}
+#run nap -s$NAP_POWER -w{}

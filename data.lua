@@ -38,5 +38,3 @@ for l in io.lines() do
 end
 
 outdata()
-
-io.stderr:write('Total time used: '..totaltime..'\n')
