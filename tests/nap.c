@@ -20,6 +20,8 @@ static void* longnap(void* dummy, void* data) {
 int main(int argc, char** argv) {
 #if defined USE_xtask
 	xtask_config xc = {0};
+#elif defined USE_openmp
+	omp_set_dynamic(0);
 #endif
 	int samples = 1000;
 	void* (*n)(void*, void*) = nap;

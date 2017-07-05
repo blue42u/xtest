@@ -68,6 +68,8 @@ static int fib(int n) {
 int main(int argc, char** argv) {
 #if defined USE_xtask
 	xtask_config xc = {0};
+#elif defined USE_openmp
+	omp_set_dynamic(0);
 #endif
 	int fibindex = 20;
 
