@@ -46,16 +46,11 @@ static void* fib(void* dummy, void* vdata) {
 static int fib(int n) {
 	if(n <= 1) return n;
 	int a,b;
-	#pragma omp parallel shared(a,b,n)
-	{
-		#pragma omp sections
-		{
-			#pragma omp section
-			a = fib(n-1);
-			#pragma omp section
-			b = fib(n-2);
-		}
-	}
+	#pragma omp task shared(a)
+	a = fib(n-1);
+	#pragma omp task shared(b)
+	b = fib(n-2);
+	#pragma omp taskwait
 	return a+b;
 }
 #elif defined USE_single
@@ -69,7 +64,7 @@ int main(int argc, char** argv) {
 #if defined USE_xtask
 	xtask_config xc = {0};
 #elif defined USE_openmp
-	omp_set_dynamic(0);
+	omp_set_nested(1);
 #endif
 	int fibindex = 20;
 
@@ -90,7 +85,10 @@ int main(int argc, char** argv) {
 #if defined USE_xtask
 	fibdata fd = {{fib, 0, NULL, NULL}, fibindex, &out};
 	xtask_run(&fd, xc);
-#elif defined(USE_single) || defined(USE_openmp)
+#elif defined USE_single
+	out = fib(fibindex);
+#elif defined USE_openmp
+	#pragma omp parallel
 	out = fib(fibindex);
 #endif
 

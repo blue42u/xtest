@@ -20,8 +20,6 @@ static void* longnap(void* dummy, void* data) {
 int main(int argc, char** argv) {
 #if defined USE_xtask
 	xtask_config xc = {0};
-#elif defined USE_openmp
-	omp_set_dynamic(0);
 #endif
 	int samples = 1000;
 	void* (*n)(void*, void*) = nap;
@@ -47,12 +45,16 @@ int main(int argc, char** argv) {
 	tasks[samples-1].sibling = NULL;
 	xtask_run(tasks, xc);
 	free(tasks);
-#elif defined USE_openmp || defined USE_single
-#if defined USE_openmp
-	#pragma omp for
-#endif
+#elif defined USE_single
 	for(int i=0; i<samples; i++)
 		n(NULL, NULL);
+#elif defined USE_openmp
+	#pragma omp parallel
+	{
+		#pragma omp for
+		for(int i=0; i<samples; i++)
+			n(NULL, NULL);
+	}
 #endif
 
 	return 0;
