@@ -11,8 +11,12 @@ MAXW=
 FIB_POWER=30
 RUNS=
 NAP_POWER=7000000
+DISABLE_SWIFT=
 while getopts xr:w:f:n: o; do
 	case "${o}" in
+	x)
+		DISABLE_SWIFT=yes
+		;;
 	f)
 		FIB_POWER=${OPTARG}
 		;;
@@ -46,7 +50,9 @@ function comp() {
 #	$CC $CFLAGS -std=gnu99 -DUSE=xtask -I$XTASK_DIR tests/$1.c \
 #		-o bin/$1.basicstack -pthread -L$XTASK_DIR -lxtask-basicstack
 	$CC $CFLAGS -std=gnu99 -DUSE_single -o bin/$1.single tests/$1.c
+	if [[ -z "${DISABLE_SWIFT}" ]]; then
 	$SWIFT_DIR/stc/bin/stc $STCFLAGS tests/$1.swift bin/$1.tic
+	fi
 }
 comp fib
 comp nap
@@ -66,19 +72,20 @@ function run() {
 		do echo -n .; done
 		echo
 	done
-	echo -n "Running $X($@) using Swift"
-	printf '.%.0s' `seq 1 $(($MS-5+2))`
-	ARGS=""
-	for a in "$@"; do
-		if [[ -z "${a:2}" ]]
-		then ARGS="$ARGS -${a:1:1}"
-		else ARGS="$ARGS -${a:1:1}=${a:2}"
-		fi
-	done
-	./run.sh $SWIFT_DIR/turbine/bin/turbine -n {} bin/$X.tic $ARGS \
-		| tee out/$X-swift.dat | while read l
-	do echo -n .; done
-	echo
+	if [[ -z "${DISABLE_SWIFT}" ]]; then
+		echo -n "Running $X($@) using Swift"
+		printf '.%.0s' `seq 1 $(($MS-5+2))`
+		ARGS=""
+		for a in "$@"; do
+			if [[ -z "${a:2}" ]]
+			then ARGS="$ARGS -${a:1:1}"
+			else ARGS="$ARGS -${a:1:1}=${a:2}"
+			fi
+		done
+		./run.sh $SWIFT_DIR/turbine/bin/turbine -n {} bin/$X.tic $ARGS \
+			| tee out/$X-swift.dat | while read l; do echo -n .; done
+		echo
+	fi
 }
 
 run fib -f$FIB_POWER -w{}
