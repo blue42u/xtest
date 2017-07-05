@@ -89,7 +89,12 @@ int main(int argc, char** argv) {
 	out = fib(fibindex);
 #elif defined USE_openmp
 	#pragma omp parallel
-	out = fib(fibindex);
+	{
+		#pragma omp single
+		{
+			out = fib(fibindex);
+		}
+	}
 #endif
 
 	printf("%d\n", out);
