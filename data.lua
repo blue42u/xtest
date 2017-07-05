@@ -16,7 +16,7 @@ local function outdata()
 		if not firsttime then firsttime = d.real end
 		print(('%-5d %-8.2f %-8.2f %-10.2f %07.4f %07.4f'):format(
 			d.cores, d.real / firsttime, d.real, d.user,
-			100*d.user/(d.user+d.sys), 100*(d.user+d.sys)/d.real
+			100*d.user/(d.user+d.sys), (d.user+d.sys)/d.real
 		))
 	end
 end
