@@ -11,12 +11,8 @@ MAXW=
 FIB_POWER=30
 RUNS=
 NAP_POWER=7000000
-DISABLE_SWIFT=
 while getopts xr:w:f:n: o; do
 	case "${o}" in
-	x)
-		DISABLE_SWIFT=yes
-		;;
 	f)
 		FIB_POWER=${OPTARG}
 		;;
@@ -53,7 +49,7 @@ function comp() {
 	$SWIFT_DIR/stc/bin/stc $STCFLAGS tests/$1.swift bin/$1.tic
 }
 comp fib
-#comp nap
+comp nap
 #comp matrix
 
 # Run the tests
@@ -63,7 +59,7 @@ function run() {
 	X="$1"
 	shift 1
 	MS=8
-	for T in single jigstack; do
+	for T in single openmp jigstack; do
 		echo -n "Running $X($@) using $T"
 		printf '.%.0s' `seq 1 $(($MS-${#T}+1))`
 		./run.sh bin/$X.$T "$@" | tee out/$X-$T.dat | while read l
@@ -86,4 +82,4 @@ function run() {
 }
 
 run fib -f$FIB_POWER -w{}
-#run nap -s$NAP_POWER -w{}
+run nap -s$NAP_POWER -w{}
