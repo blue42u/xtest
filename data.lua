@@ -1,22 +1,20 @@
 #!/usr/bin/env lua
 
 local d = {}
+local tcnt = tonumber(arg[1])
 
-print('Cores Norm     Time     HotTime    HotProp Usage  ')
-
-local firsttime
-
-local totaltime = 0
+local totaltime, points = 0, 0
+print('Threads TPS CPU')
 local function outdata()
 	if d.cores then
+		points = points + 1
 		totaltime = totaltime + d.real
 		d.real = d.real / d.count
 		d.user = d.user / d.count
 		d.sys = d.sys / d.count
-		if not firsttime then firsttime = d.real end
-		print(('%-5d %-8.2f %-8.2f %-10.2f %07.4f %07.4f'):format(
-			d.cores, d.real / firsttime, d.real, d.user,
-			100*d.user/(d.user+d.sys), (d.user+d.sys)/d.real
+		print(('%d %f %f'):format(d.cores,
+			tcnt / d.real,
+			(d.user+d.sys)/d.real
 		))
 	end
 end
@@ -39,3 +37,4 @@ for l in io.lines() do
 end
 
 outdata()
+io.stderr:write(tostring(points)..' in '..tostring(totaltime)..'s')
