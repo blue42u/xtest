@@ -3,11 +3,12 @@
 local d = {}
 local tcnt = tonumber(arg[1])
 
-local totaltime, points = 0, 0
+local totaltime, points, cnt = 0, 0, 0
 print('Threads TPS CPU')
 local function outdata()
 	if d.cores then
 		points = points + 1
+		cnt = cnt + d.count
 		totaltime = totaltime + d.real
 		d.real = d.real / d.count
 		d.user = d.user / d.count
@@ -37,4 +38,4 @@ for l in io.lines() do
 end
 
 outdata()
-io.stderr:write(tostring(points)..' in '..tostring(totaltime)..'s')
+io.stderr:write(tostring(points)..' in '..tostring(totaltime)..'s, '..tostring(totaltime/cnt)..'s per')
