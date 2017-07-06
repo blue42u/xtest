@@ -62,7 +62,7 @@ static int fib(int n) {
 
 int main(int argc, char** argv) {
 #if defined USE_xtask
-	xtask_config xc = {0};
+	xtask_config xc = {.workers=1};
 #elif defined USE_openmp
 	omp_set_nested(1);
 #endif
