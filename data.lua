@@ -4,15 +4,19 @@ local d = {}
 local tcnt = tonumber(arg[1])
 
 local totaltime, points, cnt = 0, 0, 0
+local sts = {total=0, rcnt=0, min=math.huge, max=0}
 print('Threads TPS CPU')
 local function outdata()
 	if d.cores then
-		points = points + 1
-		cnt = cnt + d.count
-		totaltime = totaltime + d.real
+		sts.rcnt = sts.rcnt + d.count
+		sts.total = sts.total + d.real
+		sts.min = math.min(sts.min, d.real / d.count)
+		sts.max = math.max(sts.max, d.real / d.count)
+
 		d.real = d.real / d.count
 		d.user = d.user / d.count
 		d.sys = d.sys / d.count
+
 		print(('%d %f %f'):format(d.cores,
 			tcnt / d.real,
 			(d.user+d.sys)/d.real
@@ -38,4 +42,5 @@ for l in io.lines() do
 end
 
 outdata()
-io.stderr:write(tostring(points)..' in '..tostring(totaltime)..'s, '..tostring(totaltime/cnt)..'s per')
+io.stderr:write(string.format('%d in %.2fs, %.2f/%.2f/%.2f',
+	sts.rcnt, sts.total, sts.min, sts.total/sts.rcnt, sts.max))
