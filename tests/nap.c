@@ -43,6 +43,7 @@ int main(int argc, char** argv) {
 	for(int i=0; i<samples; i++)
 		tasks[i] = (xtask_task){n, XTASK_FATE_LEAF, NULL, &tasks[i+1]};
 	tasks[samples-1].sibling = NULL;
+	xc.max_leafing = samples+5;
 	xtask_run(tasks, xc);
 	free(tasks);
 #elif defined USE_single

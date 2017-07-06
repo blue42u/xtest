@@ -62,7 +62,10 @@ static int fib(int n) {
 
 int main(int argc, char** argv) {
 #if defined USE_xtask
-	xtask_config xc = {.workers=1};
+	xtask_config xc = {
+		.workers=1,
+		.max_leafing=10,
+	};
 #elif defined USE_openmp
 	omp_set_nested(1);
 #endif
@@ -83,6 +86,7 @@ int main(int argc, char** argv) {
 
 	int out;
 #if defined USE_xtask
+	xc.max_tailing = fibindex + 5;
 	fibdata fd = {{fib, 0, NULL, NULL}, fibindex, &out};
 	xtask_run(&fd, xc);
 #elif defined USE_single
