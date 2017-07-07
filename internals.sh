@@ -10,17 +10,13 @@ SWIFT_DIR="${SWIFT_DIR:-${HOME}/swift-t-install}"
 MAXW=`lscpu | grep '^CPU(s)' | awk '{print $2}'`
 RUNS=1
 declare -A tests=([jigstack]=1 [openmp]=1 [single]=1 [swiftt]=1 [oneatom]=1)
-while getopts r:w:x: o; do
+while getopts r:w:x:Xo: o; do
 	case "${o}" in
-	w)
-		MAXW=${OPTARG}
-		;;
-	r)
-		RUNS=${OPTARG}
-		;;
-	x)
-		unset tests["$OPTARG"]
-		;;
+	w) MAXW=${OPTARG} ;;
+	r) RUNS=${OPTARG} ;;
+	x) unset tests["$OPTARG"] ;;
+	o) tests["$OPTARG"]=1 ;;
+	X) unset tests[*]; declare -A tests=( ) ;;
 	esac
 done
 echo "Using runtimes: ${!tests[*]}"
