@@ -5,7 +5,7 @@
 # Compile it all
 comp fib
 comp nap
-#comp matrix
+comp matrix
 
 # Run it all
 run single   fib -f42

@@ -66,8 +66,6 @@ int main(int argc, char** argv) {
 		.workers=1,
 		.max_leafing=10,
 	};
-#elif defined USE_openmp
-	omp_set_nested(1);
 #endif
 	int fibindex = 20;
 

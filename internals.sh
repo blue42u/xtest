@@ -27,8 +27,8 @@ export LD_LIBRARY_PATH=$SWIFT_DIR/lb/lib:$SWIFT_DIR/c-utils/lib:$HOME
 
 # Function to compile the different versions of a test
 if ! [[ -d bin ]]; then mkdir bin; fi
-echo "Compiling C with ${CC:=gcc} ${CFLAGS:=-O2}"
-echo "Compiling Swift with .../stc ${STCFLAGS:=}"
+echo "Compiling C with ${CC:=clang} ${CFLAGS:=-O3}"
+echo "Compiling Swift with .../stc ${STCFLAGS:=-O3}"
 function comp() {
 	# This isn't actually an imp, it counts tasks. Its... slow.
 	$CC $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
