@@ -8,11 +8,11 @@ comp nap
 comp matrix
 
 # Run it all
-run single	fib -f42
-run openmp	fib -f31  -w{}
-run jigstack	fib -f31  -w{}
-run oneatom	fib -f31  -w{}
-run swiftt	fib -f=21
+run single	fib -q -f42
+run openmp	fib -q -f31  -w{}
+run jigstack	fib -q -f31  -w{}
+run oneatom	fib -q -f31  -w{}
+run swiftt	fib -q -f=21
 
 run single	nap -s50000000
 run openmp	nap -s50000000 -w{}

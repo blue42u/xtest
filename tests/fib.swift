@@ -8,4 +8,7 @@ import sys;
 	}
 }
 
-trace(fib(string2int(argv("f", "20"))));
+int f = fib(string2int(argv("f", "20")));
+if(!argv_contains("q")) {
+	trace(f);
+}

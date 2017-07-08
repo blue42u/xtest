@@ -6,4 +6,4 @@ foreach i in [1:string2int(argv("s"))] {
 	V[i] = propagate();
 }
 
-V => trace("Done!");
+V => sleep(0);

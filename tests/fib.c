@@ -68,10 +68,11 @@ int main(int argc, char** argv) {
 	};
 #endif
 	int fibindex = 20;
+	int quiet = 0;
 
 	char c;
 	do {
-		c = getopt(argc, argv, "w:f:");
+		c = getopt(argc, argv, "w:f:q");
 		switch(c) {
 #if defined USE_xtask
 		case 'w': xc.workers = atoi(optarg); break;
@@ -79,6 +80,7 @@ int main(int argc, char** argv) {
 		case 'w': omp_set_num_threads(atoi(optarg)); break;
 #endif
 		case 'f': fibindex = atoi(optarg); break;
+		case 'q': quiet = 1; break;
 		}
 	} while(c != -1);
 
@@ -99,7 +101,7 @@ int main(int argc, char** argv) {
 	}
 #endif
 
-	printf("%d\n", out);
+	if(!quiet) printf("%d\n", out);
 
 	return 0;
 }

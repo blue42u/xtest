@@ -31,6 +31,9 @@ CFLAGS="${CFLAGS:-%}"
 CFLAGS="${CFLAGS/#%/-O3 }"
 echo "Compiling C with ${CC:=clang} ${CFLAGS}"
 echo "Compiling Swift with .../stc ${STCFLAGS:=-O3}"
+
+# The timer wrapper
+$CC $CFLAGS -std=gnu99 time.c -o bin/time
 function comp() {
 	# This isn't actually an imp, it counts tasks. Its... slow.
 	$CC $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
@@ -68,19 +71,18 @@ function run() {
 		echo "$TCNT tasks"
 
 		CMD=bin/"$C.$T"
-		if [[ $T = swiftt ]]
-		then CMD="$SWIFT_DIR/turbine/bin/turbine -n {} bin/$C.tic"
+		MINW=1
+		if [[ $T = swiftt ]]; then
+			CMD="$SWIFT_DIR/turbine/bin/turbine -n {} bin/$C.tic"
+			MINW=2
 		fi
 
 		echo -en "[$T]\t     Running test $C... "
-		for n in `seq 1 $MAXW`; do
+		for n in `seq $MINW $MAXW`; do
 			for r in `seq 1 $RUNS`; do
-				echo
-				echo Cores $n
-				time -p ${CMD/\{\}/$n} "${@/\{\}/$n}" \
-					&> /dev/null || echo Failed
+				echo -n "$n "
+				bin/time ${CMD/\{\}/$n} "${@/\{\}/$n}"
 			done
-		done |& lua data.lua "$TCNT" > out/"$C-$T".dat
-		echo
+		done | lua data.lua "$TCNT" > out/"$C-$T".dat
 	fi
 }
