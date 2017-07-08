@@ -80,7 +80,6 @@ int main(int argc, char** argv) {
 		case 'w': omp_set_num_threads(atoi(optarg)); break;
 #endif
 		case 'f': fibindex = atoi(optarg); break;
-		case 'q': quiet = 1; break;
 		}
 	} while(c != -1);
 
@@ -101,7 +100,7 @@ int main(int argc, char** argv) {
 	}
 #endif
 
-	if(!quiet) printf("%d\n", out);
+	printf("%d\n", out);
 
 	return 0;
 }

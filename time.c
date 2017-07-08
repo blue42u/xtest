@@ -38,7 +38,7 @@ int main(int argc, char* const* argv) {
 
 	if(exit != 0) {
 		printf("-1 -1 -1 TIME\n");
-		return exit;
+		return 1;
 	}
 
 	struct rusage ru;

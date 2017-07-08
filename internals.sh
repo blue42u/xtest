@@ -78,11 +78,21 @@ function run() {
 		fi
 
 		echo -en "[$T]\t     Running test $C... "
+		ERR=
 		for n in `seq $MINW $MAXW`; do
 			for r in `seq 1 $RUNS`; do
+				echo "${CMD/\{\}/$n} ${@/\{\}/$n}" >&2
 				echo -n "$n "
-				bin/time ${CMD/\{\}/$n} "${@/\{\}/$n}"
+				bin/time ${CMD/\{\}/$n} "${@/\{\}/$n}" \
+					|| echo ERR
+				echo >&2
 			done
-		done | lua data.lua "$TCNT" > out/"$C-$T".dat
+		done 2> out/tmp.log | lua data.lua "$TCNT" > out/"$C-$T".dat | :
+		if [[ ${PIPESTATUS[1]} -ne 0 ]]; then
+			echo "Error while running test:"
+			cat out/tmp.log
+			rm out/tmp.log
+			exit 1
+		else rm out/tmp.log; fi
 	fi
 }
