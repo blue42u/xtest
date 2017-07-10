@@ -10,13 +10,14 @@ SWIFT_DIR="${SWIFT_DIR:-${HOME}/swift-t-install}"
 MAXW=`lscpu | grep '^CPU(s)' | awk '{print $2}'`
 RUNS=1
 declare -A tests=([jigstack]=1 [openmp]=1 [single]=1 [swiftt]=1 [oneatom]=1)
-while getopts r:w:x:Xo: o; do
+while getopts r:w:x:Xo:S o; do
 	case "${o}" in
 	w) MAXW=${OPTARG} ;;
 	r) RUNS=${OPTARG} ;;
 	x) unset tests["$OPTARG"] ;;
 	o) tests["$OPTARG"]=1 ;;
 	X) unset tests[*]; declare -A tests=( ) ;;
+	S) DISABLE_STC=1 ;;
 	esac
 done
 echo "Using runtimes: ${!tests[*]}"
@@ -30,7 +31,9 @@ if ! [[ -d bin ]]; then mkdir bin; fi
 CFLAGS="${CFLAGS:-%}"
 CFLAGS="${CFLAGS/#%/-O3 }"
 echo "Compiling C with ${CC:=clang} ${CFLAGS}"
-echo "Compiling Swift with .../stc ${STCFLAGS:=-O3}"
+if [[ -z $DISABLE_STC ]]
+then echo "Compiling Swift with .../stc ${STCFLAGS:=-O3}"
+fi
 
 # The timer wrapper
 $CC $CFLAGS -std=gnu99 time.c -o bin/time
@@ -53,8 +56,10 @@ function comp() {
 	$CC $CFLAGS -std=gnu99 -DUSE_single -o bin/$1.single tests/$1.c
 
 	# Swift/T. The tortise.
-	$SWIFT_DIR/stc/bin/stc $STCFLAGS tests/$1.swift bin/$1.tic \
+	if [[ -z "$DISABLE_STC" ]]
+	then $SWIFT_DIR/stc/bin/stc $STCFLAGS tests/$1.swift bin/$1.tic \
 		|| echo STC failed, ignoring...
+	fi
 }
 
 # Function to run a test
