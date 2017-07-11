@@ -10,13 +10,17 @@ SWIFT_DIR="${SWIFT_DIR:-${HOME}/swift-t-install}"
 MAXW=`lscpu | grep '^CPU(s)' | awk '{print $2}'`
 RUNS=1
 declare -A tests=([jigstack]=1 [openmp]=1 [single]=1 [swiftt]=1 [oneatom]=1)
-while getopts r:w:x:Xo:S o; do
+while getopts r:w:x:Xo:Sc:C: o; do
 	case "${o}" in
 	w) MAXW=${OPTARG} ;;
 	r) RUNS=${OPTARG} ;;
 	x) unset tests["$OPTARG"] ;;
 	o) tests["$OPTARG"]=1 ;;
 	X) unset tests[*]; declare -A tests=( ) ;;
+
+	c) CFLAGS="${CFLAGS} -${OPTARG}" ;;
+	C) CC="${OPTARG}" ;;
+	s) STCFLAGS="${STCFLAGS} -${OPTARG}" ;;
 	S) DISABLE_STC=1 ;;
 	esac
 done
@@ -28,9 +32,7 @@ export LD_LIBRARY_PATH=$SWIFT_DIR/lb/lib:$SWIFT_DIR/c-utils/lib:$HOME
 
 # Function to compile the different versions of a test
 if ! [[ -d bin ]]; then mkdir bin; fi
-CFLAGS="${CFLAGS:-%}"
-CFLAGS="${CFLAGS/#%/-O3 }"
-echo "Compiling C with ${CC:=clang} ${CFLAGS}"
+echo "Compiling C with ${CC:=clang} ${CFLAGS:=-O3}"
 if [[ -z $DISABLE_STC ]]
 then echo "Compiling Swift with .../stc ${STCFLAGS:=-O3}"
 fi
