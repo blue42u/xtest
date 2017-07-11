@@ -9,7 +9,8 @@ SWIFT_DIR="${SWIFT_DIR:-${HOME}/swift-t-install}"
 # Test params
 MAXW=`lscpu | grep '^CPU(s)' | awk '{print $2}'`
 RUNS=1
-declare -A tests=([jigstack]=1 [openmp]=1 [single]=1 [swiftt]=1 [oneatom]=1)
+declare -A tests=([jigstack]=1 [openmp]=1 [single]=1 [swiftt]=1 [oneatom]=1 \
+	[atomstack]=1)
 while getopts r:w:x:Xo:Sc:C: o; do
 	case "${o}" in
 	w) MAXW=${OPTARG} ;;
@@ -49,6 +50,8 @@ function comp() {
 		-o bin/$1.jigstack -pthread -L$XTASK_DIR -lxtask-jigstack
 	$CC $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
 		-o bin/$1.oneatom -pthread -L$XTASK_DIR -lxtask-oneatom
+	$CC $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
+		-o bin/$1.atomstack -pthread -L$XTASK_DIR -lxtask-atomstack
 
 	# OpenMP, baseline parallel competitor
 	$CC $CFLAGS -std=gnu99 -DUSE_openmp -I$XTASK_DIR tests/$1.c \
