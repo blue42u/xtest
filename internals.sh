@@ -74,11 +74,11 @@ function run() {
 	T="$1"
 	shift 2
 	if [[ ${tests["$T"]} ]]; then
-		echo -en "[$T]\tCounting for test $C... "
+		echo -en "[$T]\tCounting for test $C..."
 		args=( "${@/\{\}/1}" )
 		TCNT=`bin/"$C".counter "${args[@]/=/}" |& grep '^TASKCOUNT' \
 			| awk '{print $2}'`
-		echo "$TCNT tasks"
+		echo " $TCNT tasks"
 
 		CMD=bin/"$C.$T"
 		MINW=1
@@ -87,7 +87,7 @@ function run() {
 			MINW=2
 		fi
 
-		echo -en "[$T]\t     Running test $C... "
+		echo -en "[$T]\t     Running test $C..."
 		ERR=
 		for n in `seq $MINW $MAXW`; do
 			for r in `seq 1 $RUNS`; do
