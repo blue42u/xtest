@@ -33,32 +33,31 @@ export LD_LIBRARY_PATH=$SWIFT_DIR/lb/lib:$SWIFT_DIR/c-utils/lib:$HOME
 
 # Function to compile the different versions of a test
 if ! [[ -d bin ]]; then mkdir bin; fi
-echo "Compiling C with ${CC:=clang} ${CFLAGS:=-O3}"
+echo "Compiling C with \${CC} ${CFLAGS:=-O3}"
 if [[ -z $DISABLE_STC ]]
-then echo "Compiling Swift with .../stc ${STCFLAGS:=-O3}"
+then echo "Compiling Swift with \${STC} ${STCFLAGS:=-O3}"
 fi
 
 # The timer wrapper
-$CC $CFLAGS -std=gnu99 time.c -o bin/time
+clang $CFLAGS -std=gnu99 time.c -o bin/time
 function comp() {
 	# This isn't actually an imp, it counts tasks. Its... slow.
-	$CC $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
 		-o bin/$1.counter -pthread -L$XTASK_DIR -lxtask-counter
 
 	# The different XTask implementations
-	$CC $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
 		-o bin/$1.jigstack -pthread -L$XTASK_DIR -lxtask-jigstack
-	$CC $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
 		-o bin/$1.oneatom -pthread -L$XTASK_DIR -lxtask-oneatom
-	$CC $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
 		-o bin/$1.atomstack -pthread -L$XTASK_DIR -lxtask-atomstack
 
 	# OpenMP, baseline parallel competitor
-	$CC $CFLAGS -std=gnu99 -DUSE_openmp -I$XTASK_DIR tests/$1.c \
-		-o bin/$1.openmp -fopenmp
+	clang $CFLAGS -std=gnu99 -DUSE_openmp tests/$1.c -o bin/$1.openmp -fopenmp
 
 	# Single-threaded, currently best-case.
-	$CC $CFLAGS -std=gnu99 -DUSE_single -o bin/$1.single tests/$1.c
+	clang $CFLAGS -std=gnu99 -DUSE_single -o bin/$1.single tests/$1.c
 
 	# Swift/T. The tortise.
 	if [[ -z "$DISABLE_STC" ]]
@@ -74,7 +73,8 @@ function run() {
 	T="$1"
 	shift 2
 	if [[ ${tests["$T"]} ]]; then
-		echo -en "[$T]\tCounting for test $C..."
+		if [[ ${#T} -le 5 ]]; then AL="\\t\\t"; else AL="\\t"; fi
+		echo -en "[$T]${AL}Counting for test $C..."
 		args=( "${@/\{\}/1}" )
 		TCNT=`bin/"$C".counter "${args[@]/=/}" |& grep '^TASKCOUNT' \
 			| awk '{print $2}'`
@@ -87,7 +87,7 @@ function run() {
 			MINW=2
 		fi
 
-		echo -en "[$T]\t     Running test $C..."
+		echo -en "[$T]${AL}     Running test $C..."
 		ERR=
 		for n in `seq $MINW $MAXW`; do
 			for r in `seq 1 $RUNS`; do
