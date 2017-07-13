@@ -10,7 +10,7 @@ SWIFT_DIR="${SWIFT_DIR:-${HOME}/swift-t-install}"
 MAXW=`lscpu | grep '^CPU(s)' | awk '{print $2}'`
 RUNS=1
 declare -A tests=([jigstack]=1 [openmp]=1 [single]=1 [swiftt]=1 [oneatom]=1 \
-	[atomstack]=1)
+	[atomstack]=1 [cilk]=1)
 while getopts r:w:x:Xo:Sc:C: o; do
 	case "${o}" in
 	w) MAXW=${OPTARG} ;;
@@ -55,6 +55,9 @@ function comp() {
 
 	# OpenMP, baseline parallel competitor
 	clang $CFLAGS -std=gnu99 -DUSE_openmp tests/$1.c -o bin/$1.openmp -fopenmp
+
+	# Cilk, like OpenMP but Intel-grown.
+	gcc $CFLAGS -std=gnu99 -DUSE_cilk tests/$1.c -o bin/$1.cilk -fcilkplus
 
 	# Single-threaded, currently best-case.
 	clang $CFLAGS -std=gnu99 -DUSE_single -o bin/$1.single tests/$1.c

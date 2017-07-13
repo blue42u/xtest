@@ -53,6 +53,15 @@ static int fib(int n) {
 	#pragma omp taskwait
 	return a+b;
 }
+#elif defined USE_cilk
+#include <cilk/cilk.h>
+static int fib(int n) {
+	if(n <= 1) return n;
+	int a = cilk_spawn fib(n-1);
+	int b = cilk_spawn fib(n-2);
+	cilk_sync;
+	return a+b;
+}
 #elif defined USE_single
 static int fib(int n) {
 	if(n <= 1) return n;
@@ -88,7 +97,7 @@ int main(int argc, char** argv) {
 	xc.max_tailing = fibindex + 5;
 	fibdata fd = {{fib, 0, NULL, NULL}, fibindex, &out};
 	xtask_run(&fd, xc);
-#elif defined USE_single
+#elif defined USE_single || defined USE_cilk
 	out = fib(fibindex);
 #elif defined USE_openmp
 	#pragma omp parallel

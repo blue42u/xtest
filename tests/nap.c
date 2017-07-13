@@ -6,6 +6,8 @@
 #include <xtask.h>
 #elif defined USE_openmp
 #include <omp.h>
+#elif defined USE_cilk
+#include <cilk/cilk.h>
 #endif
 
 static void* nap(void* dummy, void* data) {
@@ -49,6 +51,8 @@ int main(int argc, char** argv) {
 #elif defined USE_single
 	for(int i=0; i<samples; i++)
 		n(NULL, NULL);
+#elif defined USE_cilk
+	cilk_for(int i=0; i<samples; i++) n(NULL, NULL);
 #elif defined USE_openmp
 	#pragma omp parallel
 	{

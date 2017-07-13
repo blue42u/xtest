@@ -5,6 +5,8 @@
 
 #if defined USE_openmp
 #include <omp.h>
+#elif defined USE_cilk
+#include <cilk/cilk.h>
 #elif defined USE_xtask
 #include <xtask.h>
 typedef struct {
@@ -106,15 +108,18 @@ int main(int argc, char** argv) {
 	#pragma omp parallel
 #endif
 	{
-#ifdef USE_openmp
+#if defined USE_openmp
 		#pragma omp for
-		for(int i=0; i<n; i++) for(int j=0; j<m; j++) rot(i,j,m);
 #endif
+		for(int i=0; i<n; i++) for(int j=0; j<m; j++) rot(i,j,m);
 #ifdef USE_openmp
 		#pragma omp for
 #endif
 		for(int i=0; i<n; i++) for(int j=0; j<m; j++) copy(i,j,m);
 	}
+#elif defined USE_cilk
+	cilk_for(int i=0; i<n; i++) cilk_for(int j=0; j<m; j++) rot(i,j,m);
+	cilk_for(int i=0; i<n; i++) cilk_for(int j=0; j<m; j++) copy(i,j,m);
 #endif
 
 	free(matrixA);
