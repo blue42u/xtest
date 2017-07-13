@@ -43,24 +43,25 @@ clang $CFLAGS -std=gnu99 time.c -o bin/time
 function comp() {
 	# This isn't actually an imp, it counts tasks. Its... slow.
 	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
-		-o bin/$1.counter -pthread -L$XTASK_DIR -lxtask-counter
+		-o bin/$1.counter -pthread -L$XTASK_DIR -lxtask-counter -lm
 
 	# The different XTask implementations
 	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
-		-o bin/$1.jigstack -pthread -L$XTASK_DIR -lxtask-jigstack
+		-o bin/$1.jigstack -pthread -L$XTASK_DIR -lxtask-jigstack -lm
 	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
-		-o bin/$1.oneatom -pthread -L$XTASK_DIR -lxtask-oneatom
+		-o bin/$1.oneatom -pthread -L$XTASK_DIR -lxtask-oneatom -lm
 	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
-		-o bin/$1.atomstack -pthread -L$XTASK_DIR -lxtask-atomstack
+		-o bin/$1.atomstack -pthread -L$XTASK_DIR -lxtask-atomstack -lm
 
 	# OpenMP, baseline parallel competitor
-	clang $CFLAGS -std=gnu99 -DUSE_openmp tests/$1.c -o bin/$1.openmp -fopenmp
+	clang $CFLAGS -std=gnu99 -DUSE_openmp tests/$1.c -o bin/$1.openmp \
+		-fopenmp -lm
 
 	# Cilk, like OpenMP but Intel-grown.
-	gcc $CFLAGS -std=gnu99 -DUSE_cilk tests/$1.c -o bin/$1.cilk -fcilkplus
+	gcc $CFLAGS -std=gnu99 -DUSE_cilk tests/$1.c -o bin/$1.cilk -fcilkplus -lm
 
 	# Single-threaded, currently best-case.
-	clang $CFLAGS -std=gnu99 -DUSE_single -o bin/$1.single tests/$1.c
+	clang $CFLAGS -std=gnu99 -DUSE_single -o bin/$1.single tests/$1.c -lm
 
 	# Swift/T. The tortise.
 	if [[ -z "$DISABLE_STC" ]]
