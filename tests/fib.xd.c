@@ -17,13 +17,13 @@ static void fib(void* dummy, xdata_state* XD_s, void* in[], void* out[]) {
 	else {
 		xd_C(int, a); xd_C(int, an);
 		*an = *n-1;
-		xd_P(fib, {an}, {a});
+		xd_P(fib, xd_L(an), xd_L(a));
 
 		xd_C(int, b); xd_C(int, bn);
 		*bn = *n-2;
-		xd_P(fib, {bn}, {b});
+		xd_P(fib, xd_L(bn), xd_L(b));
 
-		xd_P(add, ((void*[]){a, b}), {o});
+		xd_P(add, xd_L(a, b), xd_L(o));
 	}
 }
 
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
 
 	int out;
 	xc.max_tailing = fibindex + 5;
-	xd_R(fib, xc, {&fibindex}, {&out});
+	xd_R(fib, xc, xd_L(&fibindex), xd_L(&out));
 	printf("%d\n", out);
 
 	return 0;
