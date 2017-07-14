@@ -53,6 +53,16 @@ function comp() {
 	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
 		-o bin/$1.atomstack -pthread -L$XTASK_DIR -lxtask-atomstack -lm
 
+	# The different XTask implementations, but using XData
+	if [[ -a tests/$1.xd.c ]]; then
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.xd.c \
+		-o bin/$1.jigstackxd -pthread -L$XTASK_DIR -lxtask-jigstack -lm
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.xd.c \
+		-o bin/$1.oneatomxd -pthread -L$XTASK_DIR -lxtask-oneatom -lm
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.xd.c \
+		-o bin/$1.atomstackxd -pthread -L$XTASK_DIR -lxtask-atomstack -lm
+	fi
+
 	# OpenMP, baseline parallel competitor
 	clang $CFLAGS -std=gnu99 -DUSE_openmp tests/$1.c -o bin/$1.openmp \
 		-fopenmp -lm

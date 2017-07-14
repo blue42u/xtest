@@ -8,8 +8,11 @@ run single	fib -f42
 run openmp	fib -f31  -w{}
 run cilk	fib -f32  -w{}
 run jigstack	fib -f31  -w{}
+run jigstackxd	fib -f31  -w{}
 run oneatom	fib -f31  -w{}
+run oneatomxd	fib -f31  -w{}
 run atomstack	fib -f31  -w{}
+run atomstackxd	fib -f31  -w{}
 run swiftt	fib -f=21
 
 comp		nap
