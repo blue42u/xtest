@@ -3,9 +3,6 @@
 #include <unistd.h>
 #include <xdata.h>
 
-#define XD_STATE XD_s
-#define XD_OUT XD_o
-
 static xd_F(add, dummy, in) {
 	int *a = in[0], *b = in[1];
 	xd_O(int, *a + *b);

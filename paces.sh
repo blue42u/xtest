@@ -20,8 +20,11 @@ run single	nap -s50000000
 run openmp	nap -s50000000 -w{}
 run cilk	nap -s70000000 -w{}
 run jigstack	nap -s7000000  -w{}
+run jigstackxd	nap -s7000000  -w{}
 run oneatom	nap -s7000000  -w{}
+run oneatomxd	nap -s7000000  -w{}
 run atomstack	nap -s7000000  -w{}
+run atomstackxd	nap -s7000000  -w{}
 run swiftt	nap -s=100000
 
 comp		matrix

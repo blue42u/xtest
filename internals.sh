@@ -112,8 +112,9 @@ function run() {
 				echo >&2
 			done
 		done 2> out/tmp.log | lua data.lua "$TCNT" > out/"$C-$T".dat | :
-		if [[ ${PIPESTATUS[1]} -ne 0 ]]; then
-			echo "Error while running test:"
+		X=${PIPESTATUS[1]}
+		if [[ $X -ne 0 ]]; then
+			echo "Error while running test (code $X):"
 			cat out/tmp.log
 			rm out/tmp.log
 			exit 1
