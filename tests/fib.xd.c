@@ -3,27 +3,28 @@
 #include <unistd.h>
 #include <xdata.h>
 
-#define XDATA_STATE XD_s
+#define XD_STATE XD_s
+#define XD_OUT XD_o
 
-static void add(void* dummy, xdata_state* XD_s, void* in[], void* out[]) {
-	int *a = in[0], *b = in[1], *o = out[0];
-	*o = *a + *b;
+static xd_F(add, dummy, in) {
+	int *a = in[0], *b = in[1];
+	xd_O(int, *a + *b);
 }
 
-static void fib(void* dummy, xdata_state* XD_s, void* in[], void* out[]) {
-	int *n = in[0], *o = out[0];
+static xd_F(fib, dummy, in) {
+	int *n = in[0];
 
-	if(*n <= 1) *o = *n;
+	if(*n <= 1) xd_O(int, *n);
 	else {
-		xd_C(int, a); xd_C(int, an);
-		*an = *n-1;
-		xd_P(fib, xd_L(an), xd_L(a));
+		xd_C(int, a);
+		xd_CV(int, an, *n-1);
+		xd_P(a, fib, an);
 
-		xd_C(int, b); xd_C(int, bn);
-		*bn = *n-2;
-		xd_P(fib, xd_L(bn), xd_L(b));
+		xd_C(int, b);
+		xd_CV(int, bn, *n-2);
+		xd_P(b, fib, bn);
 
-		xd_P(add, xd_L(a, b), xd_L(o));
+		xd_P(XD_OUT, add, a, b);
 	}
 }
 
@@ -42,7 +43,7 @@ int main(int argc, char** argv) {
 
 	int out;
 	xc.max_tailing = fibindex + 5;
-	xd_R(fib, xc, xd_L(&fibindex), xd_L(&out));
+	xd_R(xc, &out, fib, &fibindex);
 	printf("%d\n", out);
 
 	return 0;
