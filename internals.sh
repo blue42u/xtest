@@ -9,8 +9,6 @@ SWIFT_DIR="${SWIFT_DIR:-${HOME}/swift-t-install}"
 # Test params
 MAXW=`lscpu | grep '^CPU(s)' | awk '{print $2}'`
 RUNS=1
-declare -A tests=([jigstack]=1 [openmp]=1 [single]=1 [swiftt]=1 [oneatom]=1 \
-	[atomstack]=1 [cilk]=1)
 while getopts r:w:x:Xo:Sc:C: o; do
 	case "${o}" in
 	w) MAXW=${OPTARG} ;;
