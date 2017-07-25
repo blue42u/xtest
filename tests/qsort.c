@@ -64,6 +64,7 @@ static void sort(int lo, int hi) {
 }
 #elif defined USE_cilk
 #include <cilk/cilk.h>
+#include <cilk/cilk_api.h>
 static void sort(int lo, int hi) {
 	if(lo < hi) {
 		int p = part(lo, hi);
@@ -96,6 +97,8 @@ int main(int argc, char** argv) {
 		case 'w': xc.workers = atoi(optarg); break;
 #elif defined USE_openmp
 		case 'w': omp_set_num_threads(atoi(optarg)); break;
+#elif defined USE_cilk
+		case 'w': __cilkrts_set_param("nworkers", optarg); break;
 #endif
 		case 'n': size = atoi(optarg); break;
 		}
