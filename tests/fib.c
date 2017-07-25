@@ -55,6 +55,7 @@ static int fib(int n) {
 }
 #elif defined USE_cilk
 #include <cilk/cilk.h>
+#include <cilk/cilk_api.h>
 static int fib(int n) {
 	if(n <= 1) return n;
 	int a = cilk_spawn fib(n-1);
@@ -87,6 +88,8 @@ int main(int argc, char** argv) {
 		case 'w': xc.workers = atoi(optarg); break;
 #elif defined USE_openmp
 		case 'w': omp_set_num_threads(atoi(optarg)); break;
+#elif defined USE_cilk
+		case 'w': __cilkrts_set_param("nworkers", optarg); break;
 #endif
 		case 'f': fibindex = atoi(optarg); break;
 		}

@@ -7,6 +7,7 @@
 #include <omp.h>
 #elif defined USE_cilk
 #include <cilk/cilk.h>
+#include <cilk/cilk_api.h>
 #elif defined USE_xtask
 #include <xtask.h>
 typedef struct {
@@ -78,6 +79,8 @@ int main(int argc, char** argv) {
 		case 'w': xc.workers = atoi(optarg); break;
 #elif defined USE_openmp
 		case 'w': omp_set_num_threads(atoi(optarg)); break;
+#elif defined USE_cilk
+		case 'w': __cilkrts_set_param("nworkers", optarg); break;
 #endif
 		case 'n': n = atoi(optarg); break;
 		case 'm': m = atoi(optarg); break;
