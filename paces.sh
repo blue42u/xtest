@@ -1,10 +1,10 @@
 
 #!/bin/bash
 
-declare -A tests=(\
-	[cilk]=1 [openmp]=1 [single]=1 \
-	[jigstack]=1   [oneatom]=   [atomstack]= \
-	[jigstackxd]=1 [oneatomxd]= [atomstackxd]= \
+declare -A tests=(
+	[cilk]=1 [openmp]=1 [single]=1
+	[jigstack]=1   #[oneatom]=   [atomstack]=
+	[jigstackxd]=1 #[oneatomxd]= [atomstackxd]=
 	[swiftt]=1)
 
 . internals.sh

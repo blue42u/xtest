@@ -40,24 +40,24 @@ fi
 clang $CFLAGS -std=gnu99 time.c -o bin/time
 function comp() {
 	# This isn't actually an imp, it counts tasks. Its... slow.
-	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.c \
 		-o bin/$1.counter -pthread -L$XTASK_DIR -lxtask-counter -lm
 
 	# The different XTask implementations
-	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.c \
 		-o bin/$1.jigstack -pthread -L$XTASK_DIR -lxtask-jigstack -lm
-	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.c \
 		-o bin/$1.oneatom -pthread -L$XTASK_DIR -lxtask-oneatom -lm
-	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.c \
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.c \
 		-o bin/$1.atomstack -pthread -L$XTASK_DIR -lxtask-atomstack -lm
 
 	# The different XTask implementations, but using XData
 	if [[ -a tests/$1.xd.c ]]; then
-	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.xd.c \
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.xd.c \
 		-o bin/$1.jigstackxd -pthread -L$XTASK_DIR -lxtask-jigstack -lm
-	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.xd.c \
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.xd.c \
 		-o bin/$1.oneatomxd -pthread -L$XTASK_DIR -lxtask-oneatom -lm
-	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR tests/$1.xd.c \
+	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.xd.c \
 		-o bin/$1.atomstackxd -pthread -L$XTASK_DIR -lxtask-atomstack -lm
 	fi
 
