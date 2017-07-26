@@ -5,6 +5,7 @@ declare -A tests=(
 	[cilk]=1 [openmp]=1 [single]=1
 	[jigstack]=1   #[oneatom]=   [atomstack]=
 	[jigstackxd]=1 #[oneatomxd]= [atomstackxd]=
+	[xtasklua]=1
 	[swiftt]=1)
 
 . internals.sh
@@ -19,6 +20,7 @@ run oneatom	fib -f31  -w{}
 run oneatomxd	fib -f31  -w{}
 run atomstack	fib -f31  -w{}
 run atomstackxd	fib -f31  -w{}
+run xtasklua	fib -f22  -w{}
 run swiftt	fib -f=21
 
 comp		nap
@@ -31,6 +33,7 @@ run oneatom	nap -s7000000  -w{}
 run oneatomxd	nap -s7000000  -w{}
 run atomstack	nap -s7000000  -w{}
 run atomstackxd	nap -s7000000  -w{}
+run xtasklua	nap -s700000  -w{}
 run swiftt	nap -s=100000
 
 comp		matrix

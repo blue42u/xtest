@@ -46,19 +46,19 @@ function comp() {
 	# The different XTask implementations
 	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.c \
 		-o bin/$1.jigstack -pthread -L$XTASK_DIR -lxtask-jigstack -lm
-	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.c \
-		-o bin/$1.oneatom -pthread -L$XTASK_DIR -lxtask-oneatom -lm
-	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.c \
-		-o bin/$1.atomstack -pthread -L$XTASK_DIR -lxtask-atomstack -lm
+	#clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.c \
+	#	-o bin/$1.oneatom -pthread -L$XTASK_DIR -lxtask-oneatom -lm
+	#clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.c \
+	#	-o bin/$1.atomstack -pthread -L$XTASK_DIR -lxtask-atomstack -lm
 
 	# The different XTask implementations, but using XData
 	if [[ -a tests/$1.xd.c ]]; then
 	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.xd.c \
 		-o bin/$1.jigstackxd -pthread -L$XTASK_DIR -lxtask-jigstack -lm
-	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.xd.c \
-		-o bin/$1.oneatomxd -pthread -L$XTASK_DIR -lxtask-oneatom -lm
-	clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.xd.c \
-		-o bin/$1.atomstackxd -pthread -L$XTASK_DIR -lxtask-atomstack -lm
+	#clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.xd.c \
+	#	-o bin/$1.oneatomxd -pthread -L$XTASK_DIR -lxtask-oneatom -lm
+	#clang $CFLAGS -std=gnu99 -DUSE_xtask -I$XTASK_DIR/include tests/$1.xd.c \
+	#	-o bin/$1.atomstackxd -pthread -L$XTASK_DIR -lxtask-atomstack -lm
 	fi
 
 	# OpenMP, baseline parallel competitor
@@ -97,6 +97,8 @@ function run() {
 		if [[ $T = swiftt ]]; then
 			CMD="$SWIFT_DIR/turbine/bin/turbine -n {} bin/$C.tic"
 			MINW=2
+		elif [[ $T = xtasklua ]]; then
+		CMD="lua5.3 -e package.cpath='$XTASK_DIR/?.so' tests/$C.lua"
 		fi
 
 		echo -en "[$T]${AL}     Running test $C..."
